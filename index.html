@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zelda Level 1 — Matthew Priester</title>
+<meta name="description" content="The Legend of Zelda Level 1 recreated in Unity, plus a custom parry-and-dash level. CSCI 4980 Project 1.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #f2ede3;
+  --paper-deep: #e8e0d0;
+  --ink: #1b1813;
+  --ink-soft: #3d382f;
+  --muted: #6f685a;
+  --rule: #d4cab7;
+  --dungeon: #2b6a88;
+  --dungeon-deep: #1c4a61;
+  --ember: #c9461c;
+  --gold: #d6a024;
+  --serif: "Instrument Serif", Georgia, serif;
+  --sans: "Hanken Grotesk", "Helvetica Neue", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, monospace;
+  --gutter: clamp(16px, 4vw, 56px);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, rgba(43, 106, 136, 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(43, 106, 136, 0.07) 1px, transparent 1px);
+  background-size: 64px 44px;
+  mask-image: linear-gradient(to bottom, black 0%, transparent 70%);
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 70%);
+  z-index: 0;
+}
+
+a { color: inherit; }
+
+.wrap { position: relative; z-index: 1; max-width: 1180px; margin: 0 auto; padding: 0 var(--gutter); }
+
+header.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.mark { display: flex; align-items: center; gap: 12px; }
+
+.mark-tile {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  background: var(--dungeon);
+  color: var(--paper);
+  font-family: var(--serif);
+  font-size: 19px;
+  font-style: italic;
+  text-transform: none;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+.course { color: var(--muted); }
+
+.hero { padding: clamp(48px, 9vw, 104px) 0 clamp(36px, 5vw, 56px); }
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dungeon);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.eyebrow::before { content: ""; width: 22px; height: 2px; background: var(--dungeon); }
+
+h1 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(48px, 8.5vw, 112px);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  margin: 22px 0 0;
+}
+
+h1 em { color: var(--dungeon); }
+
+h3 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(28px, 3vw, 38px);
+  line-height: 1.1;
+  margin-bottom: 14px;
+}
+
+.meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+
+.chip {
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 5px 10px;
+  border: 1px solid var(--ink);
+  background: var(--paper);
+}
+
+.chip.solid { background: var(--ink); color: var(--paper); }
+
+.actions { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 36px; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 22px;
+  font-family: var(--mono);
+  font-size: 14px;
+  text-decoration: none;
+  border: 1px solid var(--ink);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn.play { background: var(--ember); color: #fff8ef; box-shadow: 4px 4px 0 var(--ink); }
+.btn.play:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--ink); }
+.btn.ghost { background: transparent; }
+.btn.ghost:hover { background: var(--ink); color: var(--paper); }
+
+.tri {
+  width: 0;
+  height: 0;
+  border-left: 9px solid currentColor;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+}
+
+.feature {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: clamp(28px, 4vw, 56px);
+  align-items: start;
+}
+
+.screen {
+  position: relative;
+  background: var(--ink);
+  padding: 14px;
+  box-shadow: 10px 10px 0 var(--dungeon);
+}
+
+.screen img { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+
+.screen-label {
+  position: absolute;
+  top: -12px;
+  left: 18px;
+  background: var(--gold);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border: 1px solid var(--ink);
+}
+
+.prose p { color: var(--ink-soft); margin-bottom: 16px; }
+
+.label {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 30px 0 6px;
+}
+
+.built { list-style: none; }
+
+.built li {
+  display: grid;
+  grid-template-columns: 26px 1fr;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--rule);
+  color: var(--ink-soft);
+}
+
+.built li::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  margin-top: 9px;
+  background: var(--dungeon);
+  transform: rotate(45deg);
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-top: clamp(40px, 6vw, 72px);
+}
+
+.gallery figure { position: relative; overflow: hidden; border: 1px solid var(--ink); background: var(--ink); }
+
+.gallery img {
+  display: block;
+  width: 100%;
+  height: auto;
+  image-rendering: pixelated;
+  transition: transform 0.35s ease;
+}
+
+.gallery figcaption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 8px 10px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--paper);
+  background: linear-gradient(to top, rgba(27, 24, 19, 0.92), transparent);
+  transform: translateY(100%);
+  transition: transform 0.25s ease;
+}
+
+.gallery figure:hover img { transform: scale(1.04); }
+.gallery figure:hover figcaption { transform: translateY(0); }
+
+.custom {
+  margin-top: clamp(64px, 9vw, 112px);
+  display: grid;
+  grid-template-columns: 1fr 1.25fr;
+  gap: clamp(28px, 4vw, 56px);
+  padding: clamp(28px, 4vw, 48px);
+  background: var(--dungeon-deep);
+  color: var(--paper);
+  position: relative;
+}
+
+.custom::before {
+  content: "GOLD";
+  position: absolute;
+  top: -14px;
+  right: 24px;
+  background: var(--gold);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  padding: 4px 12px;
+  border: 1px solid var(--ink);
+}
+
+.custom .prose p { color: rgba(242, 237, 227, 0.82); }
+.custom h3 em { color: var(--gold); }
+
+.rooms { list-style: none; counter-reset: room; margin-top: 18px; }
+
+.rooms li {
+  counter-increment: room;
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  padding: 9px 0;
+  border-top: 1px solid rgba(242, 237, 227, 0.16);
+  font-size: 15px;
+  color: rgba(242, 237, 227, 0.86);
+}
+
+.rooms li::before {
+  content: counter(room, decimal-leading-zero);
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--gold);
+  padding-top: 3px;
+}
+
+.rooms strong { color: var(--paper); font-weight: 600; }
+
+.custom-shots { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-content: start; }
+.custom-shots img { width: 100%; height: auto; display: block; image-rendering: pixelated; border: 1px solid rgba(242, 237, 227, 0.3); }
+
+.controls {
+  margin: clamp(40px, 6vw, 64px) 0 clamp(56px, 8vw, 96px);
+  border: 1px solid var(--ink);
+  display: grid;
+  grid-template-columns: 220px 1fr;
+}
+
+.controls-title {
+  padding: 22px;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--serif);
+  font-size: 26px;
+  line-height: 1.1;
+}
+
+.controls-title span { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-top: 8px; }
+
+.keys { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); }
+
+.key-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border-right: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  font-size: 15px;
+}
+
+kbd {
+  font-family: var(--mono);
+  font-size: 12px;
+  min-width: 30px;
+  padding: 4px 8px;
+  text-align: center;
+  background: var(--paper-deep);
+  border: 1px solid var(--ink);
+  box-shadow: 0 3px 0 var(--ink);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.key-row:hover kbd { transform: translateY(2px); box-shadow: 0 1px 0 var(--ink); }
+
+footer {
+  padding: 34px 0 48px;
+  border-top: 1px solid var(--rule);
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.reveal { opacity: 0; transform: translateY(18px); animation: rise 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) forwards; }
+.d1 { animation-delay: 0.05s; }
+.d2 { animation-delay: 0.18s; }
+.d3 { animation-delay: 0.31s; }
+
+@keyframes rise { to { opacity: 1; transform: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { animation: none; opacity: 1; transform: none; }
+  * { transition: none !important; }
+}
+
+.feature > *, .custom > *, .custom-shots > *, .gallery > *, .controls > * { min-width: 0; }
+
+@media (max-width: 900px) {
+  .feature, .custom { grid-template-columns: minmax(0, 1fr); }
+  .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .controls { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 520px) {
+  .course { display: none; }
+  .custom-shots { grid-template-columns: minmax(0, 1fr); }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="mark"><div class="mark-tile">M</div><span>Matthew Priester</span></div>
+    <span class="course">CSCI 4980 · Project 1</span>
+  </header>
+
+  <section class="hero">
+    <p class="eyebrow reveal d1">Unity · C# · Team of 2</p>
+    <h1 class="reveal d2">The Legend of Zelda,<br><em>Level 1 rebuilt</em></h1>
+  </section>
+
+  <section class="reveal d3">
+    <div class="feature">
+      <div>
+        <div class="screen">
+          <span class="screen-label">Boss · Aquamentus</span>
+          <img src="images/dungeon-boss.png" alt="Link facing Aquamentus as it fires three fireballs" width="1024" height="960">
+        </div>
+      </div>
+      <div class="prose">
+        <div class="meta">
+          <span class="chip solid">CSCI 4980</span>
+          <span class="chip">Unity 6</span>
+          <span class="chip">C#</span>
+        </div>
+        <div class="actions">
+          <a class="btn play" href="zelda/index.html"><span class="tri"></span> Play in browser</a>
+          <a class="btn ghost" href="https://github.com/Tanpopo04038/CSCI4980-Project1-Zelda">Source on GitHub</a>
+        </div>
+        <p>A recreation of the first dungeon from the original 1986 Legend of Zelda: grid-based movement, room-by-room camera transitions, locked doors and keys, every enemy in the Eagle dungeon, and the Aquamentus boss fight.</p>
+        <p>On top of the recreation, we designed an original seven-room level built around a new parry-and-dash mechanic.</p>
+        <p class="label">What I built</p>
+        <ul class="built">
+          <li>Health, damage, hit-stun and invincibility frames shared by Link and every enemy</li>
+          <li>Room transitions, locked doors and keys, and shutter doors that seal until a room is cleared</li>
+          <li>Stalfos, Keese, Gel, Goriya, Wallmaster, and the Aquamentus boss</li>
+          <li>Authentic enemy and item placement and full dungeon progression</li>
+          <li>The seven-room custom level, armored enemies, and the golden boss</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="gallery">
+      <figure><img src="images/dungeon-start.png" alt="Entrance room with statues and a locked door" loading="lazy" width="1024" height="960"><figcaption>Entrance</figcaption></figure>
+      <figure><img src="images/dungeon-goriya.png" alt="Goriyas throwing boomerangs in a water room" loading="lazy" width="1024" height="960"><figcaption>Goriyas and boomerangs</figcaption></figure>
+      <figure><img src="images/dungeon-keese.png" alt="A swarm of Keese around the compass" loading="lazy" width="1024" height="960"><figcaption>Keese swarm</figcaption></figure>
+      <figure><img src="images/dungeon-water.png" alt="Stalfos in the water maze" loading="lazy" width="1024" height="960"><figcaption>Water maze</figcaption></figure>
+      <figure><img src="images/dungeon-gels.png" alt="Gels hopping around the map room" loading="lazy" width="1024" height="960"><figcaption>Map room</figcaption></figure>
+      <figure><img src="images/dungeon-oldman.png" alt="The old man between two fires" loading="lazy" width="1024" height="960"><figcaption>Old man</figcaption></figure>
+      <figure><img src="images/dungeon-bowroom.png" alt="The side-scrolling bow room" loading="lazy" width="1024" height="960"><figcaption>2D bow room</figcaption></figure>
+      <figure><img src="images/custom-boss.png" alt="Golden Aquamentus in the custom level" loading="lazy" width="1024" height="960"><figcaption>Custom level boss</figcaption></figure>
+    </div>
+
+    <div class="custom">
+      <div class="prose">
+        <h3>Custom level: <em>Parry &amp; Dash</em></h3>
+        <p>Parry an attack at the last moment to take no damage. Three parries power up the sword. Dash to slip straight through enemies and hazards. Armored enemies shrug off normal hits, so the player has to choose between standing their ground and getting out of the way.</p>
+        <ol class="rooms">
+          <li><span><strong>Parry training.</strong> The exit only opens after your first power-up.</span></li>
+          <li><span><strong>Dash training.</strong> Armored guards block the only corridor.</span></li>
+          <li><span><strong>Projectiles.</strong> Parry Goriya boomerangs to charge up.</span></li>
+          <li><span><strong>Blade gauntlet.</strong> Wait for the blades, or dash through them.</span></li>
+          <li><span><strong>Arena.</strong> Everything at once for the boss key.</span></li>
+          <li><span><strong>Golden Aquamentus.</strong> Only a powered-up sword breaks its armor.</span></li>
+          <li><span><strong>Victory.</strong> Claim the Triforce.</span></li>
+        </ol>
+      </div>
+      <div class="custom-shots">
+        <img src="images/custom-parry.png" alt="Parry training room with the buff active and the door open" loading="lazy" width="1024" height="960">
+        <img src="images/custom-dash.png" alt="Link dashing through an armored guard" loading="lazy" width="1024" height="960">
+        <img src="images/custom-blades.png" alt="The blade trap gauntlet" loading="lazy" width="1024" height="960">
+        <img src="images/custom-boss.png" alt="Fighting the golden Aquamentus with the parry buff active" loading="lazy" width="1024" height="960">
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="controls-title">How to play<span>Keyboard</span></div>
+      <div class="keys">
+        <div class="key-row"><kbd>WASD</kbd> Move</div>
+        <div class="key-row"><kbd>X</kbd> Sword</div>
+        <div class="key-row"><kbd>Z</kbd> Alternate weapon</div>
+        <div class="key-row"><kbd>Space</kbd> Switch weapon</div>
+        <div class="key-row"><kbd>C</kbd> Parry (custom level)</div>
+        <div class="key-row"><kbd>Shift</kbd> Dash (custom level)</div>
+        <div class="key-row"><kbd>4</kbd> Jump to custom level</div>
+        <div class="key-row"><kbd>1</kbd> Cheat mode</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>Matthew Priester · CSCI 4980 Project 1</footer>
+
+</div>
+</body>
+</html>
