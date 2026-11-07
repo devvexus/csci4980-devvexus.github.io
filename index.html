@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Zelda Level 1 — Matthew Priester</title>
-<meta name="description" content="The Legend of Zelda Level 1 recreated in Unity, plus a custom parry-and-dash level. CSCI 4980 Project 1.">
+<title>Matthew Priester — Game Portfolio</title>
+<meta name="description" content="Matthew Priester's CSCI 4980 games: Sleepwalker, a solo prototype about walking in your sleep, and a Unity recreation of The Legend of Zelda Level 1.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -24,6 +24,10 @@
   --sans: "Hanken Grotesk", "Helvetica Neue", sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, monospace;
   --gutter: clamp(16px, 4vw, 56px);
+  --night: #12131f;
+  --violet: #5b4fc4;
+  --lavender: #b9a8ff;
+  --waking: #ffd14d;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -371,12 +375,94 @@ footer {
   * { transition: none !important; }
 }
 
-.feature > *, .custom > *, .custom-shots > *, .gallery > *, .controls > * { min-width: 0; }
+.intro { max-width: 680px; margin-top: 26px; font-size: 19px; color: var(--ink-soft); }
+
+.index { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 34px; max-width: 860px; }
+
+.index a {
+  display: block;
+  padding: 18px 20px;
+  border: 1px solid var(--ink);
+  background: var(--paper);
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.index a:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--ink); }
+.index .num { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.index .name { display: block; font-family: var(--serif); font-size: 28px; line-height: 1.1; margin-top: 8px; }
+.index .what { display: block; font-size: 15px; color: var(--ink-soft); margin-top: 6px; }
+
+.project { padding-top: clamp(48px, 7vw, 88px); margin-top: clamp(24px, 4vw, 40px); border-top: 1px solid var(--rule); }
+.project-head { margin-bottom: clamp(28px, 4vw, 48px); }
+
+h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(40px, 6.5vw, 84px);
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  margin-top: 18px;
+}
+
+h2 em { color: var(--dungeon); }
+
+.night-eyebrow { color: var(--violet); }
+.night-eyebrow::before { background: var(--violet); }
+h2 em.night-em { color: var(--violet); }
+
+.screen.night { background: var(--night); box-shadow: 10px 10px 0 var(--violet); }
+.screen.night .screen-label { background: var(--waking); }
+.screen.night img, .smooth img { image-rendering: auto; }
+
+.btn.play.night-btn { background: var(--violet); }
+.night-list li::before { background: var(--violet); }
+
+.dream {
+  margin-top: clamp(64px, 9vw, 112px);
+  display: grid;
+  grid-template-columns: 1fr 1.25fr;
+  gap: clamp(28px, 4vw, 56px);
+  padding: clamp(28px, 4vw, 48px);
+  background: var(--night);
+  color: var(--paper);
+  position: relative;
+}
+
+.dream::before {
+  content: "UPDATED PROTOTYPE";
+  position: absolute;
+  top: -14px;
+  right: 24px;
+  background: var(--waking);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  padding: 4px 12px;
+  border: 1px solid var(--ink);
+}
+
+.dream .prose p { color: rgba(242, 237, 227, 0.82); }
+.dream h3 em { color: var(--lavender); }
+.dream .rooms li::before { color: var(--lavender); }
+
+.playtest { margin-top: clamp(40px, 6vw, 64px); max-width: 900px; }
+.playtest strong { color: var(--ink); font-weight: 600; }
+
+.controls-title.night-title { background: var(--night); }
+.controls-title.night-title span { color: var(--lavender); }
+
+.feature > *, .custom > *, .dream > *, .custom-shots > *, .gallery > *, .controls > * { min-width: 0; }
 
 @media (max-width: 900px) {
-  .feature, .custom { grid-template-columns: minmax(0, 1fr); }
+  .feature, .custom, .dream { grid-template-columns: minmax(0, 1fr); }
   .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .controls { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 600px) {
+  .index { grid-template-columns: minmax(0, 1fr); }
 }
 
 @media (max-width: 520px) {
@@ -390,15 +476,105 @@ footer {
 
   <header class="top">
     <div class="mark"><div class="mark-tile">M</div><span>Matthew Priester</span></div>
-    <span class="course">CSCI 4980 · Project 1</span>
+    <span class="course">CSCI 4980 · Portfolio</span>
   </header>
 
   <section class="hero">
-    <p class="eyebrow reveal d1">Unity · C# · Team of 2</p>
-    <h1 class="reveal d2">The Legend of Zelda,<br><em>Level 1 rebuilt</em></h1>
+    <p class="eyebrow reveal d1">Game portfolio · Unity · C#</p>
+    <h1 class="reveal d2">Matthew Priester</h1>
+    <p class="intro reveal d3">Games I built for CSCI 4980. Sleepwalker is a solo prototype built around an original mechanic and taken through a class playtest to an updated build. The Zelda project is a team recreation of the first dungeon from the 1986 original, plus a custom level. Both play in the browser.</p>
+    <nav class="index reveal d3" aria-label="Projects">
+      <a href="#sleepwalker"><span class="num">Project 2 · Solo</span><span class="name">Sleepwalker</span><span class="what">A platformer where you can only stand on what you can't see</span></a>
+      <a href="#zelda"><span class="num">Project 1 · Team of 2</span><span class="name">The Legend of Zelda, Level 1</span><span class="what">The first dungeon rebuilt, plus a parry-and-dash level</span></a>
+    </nav>
   </section>
 
-  <section class="reveal d3">
+  <section class="project" id="sleepwalker">
+    <div class="project-head">
+      <p class="eyebrow night-eyebrow">Project 2 · Solo</p>
+      <h2>Sleepwalker,<br><em class="night-em">walk in your sleep</em></h2>
+    </div>
+
+    <div class="feature">
+      <div>
+        <div class="screen night">
+          <span class="screen-label">Rest Stop · asleep</span>
+          <img src="images/sleepwalker-asleep.png" alt="The sleepwalker crossing an unseen dream bridge in the dark while the memory ring glows red" width="1280" height="720">
+        </div>
+      </div>
+      <div class="prose">
+        <div class="meta">
+          <span class="chip solid">CSCI 4980</span>
+          <span class="chip">Solo</span>
+          <span class="chip">Unity 6</span>
+          <span class="chip">C#</span>
+          <span class="chip">2D physics</span>
+        </div>
+        <div class="actions">
+          <a class="btn play night-btn" href="sleepwalker/index.html"><span class="tri"></span> Play in browser</a>
+        </div>
+        <p>A 2D platformer where you can only stand on what you can't see. Hold Shift to fall asleep: the screen fades to black and blue dream blocks become solid, but you can no longer see them. Memorize the level with your eyes open, then cross it blind.</p>
+        <p>Yellow waking blocks only exist while you are awake, and a ring shows how far you can sleepwalk before you wake up, so every room asks where to close your eyes and when to open them.</p>
+        <p class="label">What I built</p>
+        <ul class="built night-list">
+          <li>The core mechanic: sleep state, dream and waking blocks, the darkness fade, and the memory ring</li>
+          <li>Player movement with coyote time and a slower sleepwalking speed</li>
+          <li>Seven rooms that each use the mechanic differently, plus title and win screens</li>
+          <li>A playtest script and survey, run with classmates in class</li>
+          <li>An updated prototype built from that feedback</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dream">
+      <div class="prose">
+        <h3>Seven rooms, <em>one mechanic</em></h3>
+        <p>Each room introduces one new way to use sleep, with at most two lines of hint text.</p>
+        <ol class="rooms">
+          <li><span><strong>Doze.</strong> Close your eyes and the dream bridge holds you.</span></li>
+          <li><span><strong>Stairs.</strong> Jump in your sleep from memory.</span></li>
+          <li><span><strong>Rest Stop.</strong> The crossing is longer than the ring. Wake up halfway.</span></li>
+          <li><span><strong>Walls.</strong> Sleepwalk straight through yellow walls.</span></li>
+          <li><span><strong>Blink.</strong> Fall asleep and wake up in mid-air on every jump.</span></li>
+          <li><span><strong>Trapdoor.</strong> Fall through a dream floor awake, then sleep to be caught.</span></li>
+          <li><span><strong>Home.</strong> Everything at once.</span></li>
+        </ol>
+      </div>
+      <div class="custom-shots smooth">
+        <img src="images/sleepwalker-walls.png" alt="Two yellow walls blocking the path in the Walls room" loading="lazy" width="1280" height="720">
+        <img src="images/sleepwalker-blink.png" alt="Alternating yellow and blue platforms climbing toward the bed in the Blink room" loading="lazy" width="1280" height="720">
+        <img src="images/sleepwalker-trapdoor.png" alt="A closed room with a dream-block trapdoor above a hidden dream floor" loading="lazy" width="1280" height="720">
+        <img src="images/sleepwalker-home.png" alt="The final room, with a dream bridge running through a yellow wall" loading="lazy" width="1280" height="720">
+      </div>
+    </div>
+
+    <div class="playtest">
+      <p class="label">From playtest to update</p>
+      <ul class="built night-list">
+        <li><span><strong>"I kept slipping off the steps."</strong> Swapped the rounded collider for a flat one with soft corners, and widened the steps.</span></li>
+        <li><span><strong>"If you sleep and jump at the same time, you can't jump."</strong> Added coyote time, as the tester suggested.</span></li>
+        <li><span><strong>"Still confused regarding the ring."</strong> The ring now turns red near its edge and flashes when it wakes you, and the bridges are too long to jump over.</span></li>
+        <li><span><strong>"Missing the blocks while I was asleep."</strong> Sleepwalking is slower, so blind jumps are easier to aim.</span></li>
+      </ul>
+    </div>
+
+    <div class="controls">
+      <div class="controls-title night-title">How to play<span>Keyboard</span></div>
+      <div class="keys">
+        <div class="key-row"><kbd>A</kbd><kbd>D</kbd> Move</div>
+        <div class="key-row"><kbd>Space</kbd> Jump</div>
+        <div class="key-row"><kbd>Shift</kbd> Hold to sleep</div>
+        <div class="key-row"><kbd>R</kbd> Restart room</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="project" id="zelda">
+    <div class="project-head">
+      <p class="eyebrow">Project 1 · Team of 2</p>
+      <h2>The Legend of Zelda,<br><em>Level 1 rebuilt</em></h2>
+    </div>
+
     <div class="feature">
       <div>
         <div class="screen">
@@ -477,7 +653,7 @@ footer {
     </div>
   </section>
 
-  <footer>Matthew Priester · CSCI 4980 Project 1</footer>
+  <footer>Matthew Priester · CSCI 4980 · Projects 1 and 2</footer>
 
 </div>
 </body>
